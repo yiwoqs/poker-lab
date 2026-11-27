@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Poker Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0a10;--p:#15151f;--p2:#1f1f2d;--ln:#2a2a3c;--t:#f4f4f8;--m:#9a9ab0;--a:#8b6cff;--g:#2ee59d;--r:#ff4d6d;--y:#ffd23f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(900px 500px at 50% -120px,#3b2a85 0,transparent 70%),var(--bg);color:var(--t);font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+.w{max-width:960px;margin:0 auto;padding:16px}
+.top{display:flex;align-items:center;gap:10px;padding:8px 0 20px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.04em}
+.logo i{width:30px;height:18px;position:relative;display:inline-block}
+.logo i:before,.logo i:after{content:"";position:absolute;top:0;width:18px;height:18px;border-radius:50%;border:4px solid var(--y)}
+.logo i:before{left:0}.logo i:after{left:12px}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;margin:8px 0 12px;letter-spacing:-.02em}
+.sub{color:var(--m);max-width:560px;margin:0 0 16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{background:var(--p);border:1px solid var(--ln);border-radius:99px;padding:5px 12px;font-size:13px;color:var(--m)}
+.chip:before{content:"●";color:var(--g);margin-right:6px;font-size:9px}
+.seg{display:inline-flex;background:var(--p);border:1px solid var(--ln);border-radius:14px;padding:4px;margin-bottom:18px}
+.seg button{background:none;padding:8px 18px;border-radius:10px;color:var(--m)}
+.seg button.on{background:var(--a);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.mod{background:var(--p);border:1px solid var(--ln);border-radius:20px;padding:18px;text-align:left;transition:.2s;display:flex;flex-direction:column;gap:6px}
+.mod:hover{border-color:var(--a);transform:translateY(-2px);box-shadow:0 10px 30px #8b6cff33}
+.mod .n{color:var(--a);font-size:13px;font-weight:600}.mod b{font-size:18px}.mod span{color:var(--m);font-size:14px}
+.mod small{color:var(--m);font-size:12px;margin-top:6px}
+.bar2{height:4px;background:var(--p2);border-radius:9px;overflow:hidden}.bar2 div{height:100%;background:var(--g)}
+.st{margin-top:28px;background:var(--p);border:1px solid var(--ln);border-radius:20px;padding:18px;overflow-x:auto}
+.st table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px}
+.st td,.st th{padding:7px 6px;text-align:left;border-bottom:1px solid var(--ln)}.st th{color:var(--m);font-weight:500}
+.ghost{background:var(--p);border:1px solid var(--ln);border-radius:12px;padding:8px 14px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.pill{background:var(--p);border:1px solid var(--ln);border-radius:99px;padding:6px 14px;font-size:14px;color:var(--m)}
+.bar .pill:last-child{margin-left:auto;color:var(--g)}
+.stage{background:radial-gradient(500px 220px at 50% 0,#3b2a8540,transparent 70%),var(--p);border:1px solid var(--ln);border-radius:24px;padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;min-height:150px}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.lb{font-size:12px;color:var(--m);text-transform:uppercase;letter-spacing:.08em}
+.duo{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}.duo>div{display:flex;flex-direction:column;align-items:center;gap:6px}
+.c{position:relative;width:clamp(48px,12vw,72px);aspect-ratio:5/7;background:#fafafa;color:#14141c;border-radius:11px;box-shadow:0 8px 18px #0008;transition:.3s}
+.c.red{color:#e5314f}.c b{position:absolute;left:8px;top:4px;font-size:clamp(18px,4.4vw,26px);font-weight:600}
+.c i{position:absolute;right:7px;bottom:3px;font-style:normal;font-size:clamp(22px,5.5vw,34px)}
+.c.ph{background:none;border:2px dashed var(--ln);box-shadow:none}
+.c.dim{opacity:.3;transform:scale(.94)}
+.qt{font-size:20px;margin:20px 0 12px;line-height:1.3}
+.opts{display:grid;gap:10px}.opts.g2{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.o{background:var(--p2);border:1px solid var(--ln);border-radius:14px;padding:13px 16px;text-align:left;transition:.15s}
+.o:hover:not(:disabled){border-color:var(--a)}.o:disabled{cursor:default}
+.o kbd{color:var(--m);font:12px inherit;margin-right:10px;border:1px solid var(--ln);border-radius:6px;padding:1px 6px}
+.o.ok{background:#2ee59d22;border-color:var(--g)}.o.no{background:#ff4d6d22;border-color:var(--r)}
+.fb{margin-top:16px;background:var(--p);border:1px solid var(--ln);border-radius:18px;padding:16px 18px}
+.fb[hidden]{display:none}.fh{font-weight:700;font-size:18px}.fh.g{color:var(--g)}.fh.r{color:var(--r)}.fb p{margin:6px 0 14px;color:#d4d4e2}
+.btn{background:var(--a);color:#fff;border-radius:12px;padding:11px 22px;font-weight:600}.btn.rs{background:var(--r)}
+.tbl{position:relative;width:100%;max-width:560px;aspect-ratio:16/11}
+.felt{position:absolute;inset:14% 8%;border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#2a2160,#121220);border:1px solid var(--ln);box-shadow:0 0 60px #8b6cff40}
+.seat{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px}
+.seat small{font-size:11px;color:var(--m)}
+.av{position:relative;width:clamp(34px,8vw,46px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#14141c;font-weight:700}
+.seat.hi .av{outline:3px solid var(--y);box-shadow:0 0 18px var(--y)}
+.av u{position:absolute;right:-6px;bottom:-4px;background:#fff;color:#000;border-radius:50%;width:18px;height:18px;font:700 11px/18px sans-serif;text-align:center;text-decoration:none}
+</style></head><body><div class="w"><div class="top"><div class="logo">POKER LAB</div></div><div id="app"></div></div>
+<script>
+const $=s=>document.querySelector(s),app=$('#app');
+let st={};try{st=JSON.parse(localStorage.getItem('pl')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('pl',JSON.stringify(st))}catch(e){}};
+let lvl=0,mod=0,q=null,ses={n:0,c:0},done=false,inQ=false,rst=false;
+const LV=['Лёгкий','Средний','Сложный'];
+const rnd=n=>Math.floor(Math.random()*n),pick=a=>a[rnd(a.length)];
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const RN=r=>({11:'J',12:'Q',13:'K',14:'A'}[r]||r),SU=['♠','♥','♦','♣'];
+const deck=()=>{const d=[];for(let r=2;r<15;r++)for(let s=0;s<4;s++)d.push({r,s,id:r+''+s});return shuf(d)};
+const card=c=>`<div class="c ${c.s==1||c.s==2?'red':''}" data-id="${c.id}"><b>${RN(c.r)}</b><i>${SU[c.s]}</i></div>`;
+const row=cs=>`<div class="row">${cs.map(card).join('')}</div>`;
+const pc=s=>(s.match(/../g)||[]).map(x=>({r:{A:14,K:13,Q:12,J:11,T:10}[x[0]]||+x[0],s:'shdc'.indexOf(x[1]),id:x}));
+const CN=['Старшая карта','Пара','Две пары','Тройка (сет)','Стрит','Флеш','Фулл-хаус','Каре','Стрит-флеш'];
+const GP={2:'двоек',3:'троек',4:'четвёрок',5:'пятёрок',6:'шестёрок',7:'семёрок',8:'восьмёрок',9:'девяток',10:'десяток',11:'валетов',12:'дам',13:'королей',14:'тузов'};
+function sc5(cs){const rs=cs.map(c=>c.r).sort((a,b)=>b-a),cnt={};rs.forEach(r=>cnt[r]=(cnt[r]||0)+1);
+ const g=Object.keys(cnt).map(Number).sort((a,b)=>cnt[b]-cnt[a]||b-a),fl=cs.every(c=>c.s==cs[0].s);let sv=0;
+ if(g.length==5){if(rs[0]-rs[4]==4)sv=rs[0];else if(rs.join()=='14,5,4,3,2')sv=5}
+ const c0=cnt[g[0]];
+ if(sv&&fl)return[8,sv];if(c0==4)return[7,g[0],g[1]];if(c0==3&&cnt[g[1]]==2)return[6,g[0],g[1]];
+ if(fl)return[5,...rs];if(sv)return[4,sv];if(c0==3)return[3,...g];if(c0==2&&cnt[g[1]]==2)return[2,...g];if(c0==2)return[1,...g];return[0,...rs]}
+const cmp=(a,b)=>{for(let i=0;i<Math.max(a.length,b.length);i++){const d=(a[i]||0)-(b[i]||0);if(d)return d}return 0};
+function best(cs){let b=null,bc;const n=cs.length,rec=(s,ch)=>{if(ch.length==5){const v=sc5(ch);if(!b||cmp(v,b)>0){b=v;bc=ch}return}for(let i=s;i<n;i++)rec(i+1,[...ch,cs[i]])};rec(0,[]);return{s:b,use:bc.map(c=>c.id)}}
+function ds(s){const c=s[0],R=RN;return[`Старшая карта ${R(s[1])}`,`Пара ${GP[s[1]]}`,`Две пары: ${GP[s[1]]} и ${GP[s[2]]}`,`Тройка ${GP[s[1]]}`,`Стрит до ${R(s[1])}`,`Флеш, старшая карта ${R(s[1])}`,`Фулл-хаус: ${GP[s[1]]} на ${GP[s[2]]}`,`Каре ${GP[s[1]]}`,s[1]==14?'Роял-флеш':`Стрит-флеш до ${R(s[1])}`][c]}
+const ORD='<br><small>Старшинство: старшая карта &lt; пара &lt; две пары &lt; тройка &lt; стрит &lt; флеш &lt; фулл-хаус &lt; каре &lt; стрит-флеш.</small>';
+// Модуль 1
+const m1=l=>{const n=l?7:5,tg=pick([0,1,1,2,2,3,4,5,6,7]);let d,b;
+ for(let i=0;i<5000;i++){d=deck().slice(0,n);b=best(d);if(b.s[0]==tg)break}
+ const ct=b.s[0],opts=l==2?[0,1,2,3,4,5,6,7,8]:shuf([ct,...shuf([0,1,2,3,4,5,6,7].filter(x=>x!=ct)).slice(0,l?4:3)]);
+ const vis=l?`<div class="lb">Ваши карты</div>${row(d.slice(0,2))}<div class="lb">Борд</div>${row(d.slice(2))}`:row(d);
+ return{t:'Какая комбинация собрана?',vis,opts:opts.map(i=>CN[i]),ans:opts.indexOf(ct),use:b.use,exp:`<b>${ds(b.s)}.</b> ${l?'Лучшие пять из семи карт подсвечены, остальные не участвуют.':''}${ORD}`}};
+// Модуль 2
+const P6=['BTN','SB','BB','UTG','HJ','CO'],P9=['BTN','SB','BB','UTG','UTG+1','UTG+2','LJ','HJ','CO'];
+const NM=['Игорь','Анна','Борис','Вика','Глеб','Дима','Ева','Жора','Зоя'];
+const PD={BTN:'Баттон (дилер) — лучшая позиция: после флопа вы ходите последним.',SB:'Малый блайнд — вносит половину ББ; после флопа ходит первым.',BB:'Большой блайнд — вносит полную ставку; на префлопе ходит последним.',UTG:'Under the Gun — первым действует на префлопе, самая слабая позиция.','UTG+1':'Ранняя позиция сразу после UTG.','UTG+2':'Средняя позиция (MP).',LJ:'Lojack — середина стола.',HJ:'Hijack — поздняя позиция, за два места до баттона.',CO:'Cutoff — справа от баттона, вторая по силе позиция.'};
+function tbl(n,btn,hi){let h='';for(let i=0;i<n;i++){const a=Math.PI/2+i*2*Math.PI/n,x=50+43*Math.cos(a),y=50+40*Math.sin(a);
+ h+=`<div class="seat${i==hi?' hi':''}" style="left:${x}%;top:${y}%"><div class="av" style="background:hsl(${i*41+250} 70% 62%)">${i==hi?'?':NM[i][0]}${i==btn?'<u>D</u>':''}</div><small>${NM[i]}</small></div>`}
+ return`<div class="tbl"><div class="felt"></div>${h}</div>`}
+const m2=l=>{if(l<2){const n=l?9:6,P=l?P9:P6,btn=rnd(n),hi=rnd(n),pos=P[(hi-btn+n)%n];
+  return{t:'Какую позицию занимает выделенный игрок?',vis:tbl(n,btn,hi)+'<div class="lb">D — кнопка дилера · порядок хода по часовой стрелке</div>',opts:P,ans:P.indexOf(pos),exp:`<b>${pos}.</b> ${PD[pos]}<br><small>От баттона по часовой: ${P.join(' → ')}.</small>`}}
+ const n=pick([6,9]),btn=rnd(n),k=rnd(3),w=[(btn+3)%n,(btn+1)%n,(btn+2)%n][k];
+ const tx=['Кто ходит первым на префлопе?','Кто ходит первым на флопе?','Кто ставит большой блайнд?'][k];
+ const ex=['Префлоп начинает игрок слева от большого блайнда (UTG).','После флопа первым ходит ближайший к кнопке слева активный игрок — малый блайнд.','Малый блайнд — следующий за баттоном, большой — за ним.'][k];
+ const o=shuf([w,...shuf([...Array(n).keys()].filter(i=>i!=w)).slice(0,3)]);
+ return{t:tx,vis:tbl(n,btn,-1)+'<div class="lb">D — кнопка дилера · за столом '+n+' игроков</div>',opts:o.map(i=>NM[i]),ans:o.indexOf(w),exp:`<b>${NM[w]}.</b> ${ex}`}};
+// Банки статических задач: [ур., вопрос, карты, борд, варианты, верный, объяснение]
+const B3=[[1,'Сколько карт сжигают (burn) за раздачу до ривера включительно?','','',['1','2','3','4'],2,'Одна карта сгорает перед флопом, перед тёрном и перед ривером — всего 3.'],
+[1,'Когда выкладывается тёрн?','','',['После торговли на флопе','Сразу после флопа без торгов','После вскрытия карт','До флопа'],0,'Каждая улица сопровождается кругом торговли. Тёрн — 4-я общая карта, выкладывается после завершения торгов на флопе.'],
+[1,'Сколько общих карт на столе на ривере?','','',['3','4','5','7'],2,'Флоп — 3 карты, тёрн — 1, ривер — 1: всего 5.'],
+[2,'Сколько карт ушло из колоды к ривер при 9 игроках (карманные, сожжённые, общие)?','','',['23','26','28','31'],1,'Карманные 9×2 = 18, общие 5, сожжённые 3. Итого 26.'],
+[2,'Кто вскрывает карты первым на шоудауне, если на ривере были ставка и колл?','','',['Сделавший ставку','Заколлировавший','Игрок на баттоне','Любой по желанию'],0,'Первым открывается последний агрессор. Если ставок не было — первый слева от баттона.'],
+[2,'Сколько кругов торговли возможно максимум в холдеме?','','',['3','4','5','6'],1,'Префлоп, флоп, тёрн, ривер — четыре круга.']];
+const B5=[[0,'У вас пара тузов на префлопе, перед вами рейз. Что делать?','AsAh','',['Фолд','Колл','Рейз (3-бет)'],2,'AA — сильнейшая стартовая рука. Набираем банк: 3-бет на вэлью.'],
+[0,'Вы на UTG, все ещё не ходили. Лучшее решение с этой рукой?','7c2d','',['Рейз','Колл','Фолд'],2,'7-2 разномастные — худшая рука: нет ни старших карт, ни связности. Из ранней позиции это фолд.'],
+[0,'Что означает «чек»?','','',['Пропустить ход без ставки','Сбросить карты','Повысить ставку'],0,'Чек возможен, когда ставки перед вами нет: вы остаётесь в раздаче бесплатно.'],
+[1,'Банк 100, соперник ставит 50. Какая доля выигрыша нужна для безубыточного колла?','','',['20%','25%','33%','50%'],1,'Банк стал 150, платить 50: 50 / (150 + 50) = 25%.'],
+[1,'Сколько у вас аутов до флеша на флопе?','AhKh','Qh7h2c',['8','9','10','13'],1,'В колоде 13 карт масти, 4 видны (две у вас, две на борде) — остаётся 9.'],
+[1,'Борд сухой, у вас сет, соперник сделал чек. Лучшее действие?','QsQd','Qh7c2d',['Чек','Ставка на вэлью','Фолд'],1,'Сет очень силён. Ставим, чтобы набрать банк с более слабых рук (пары, оверпары).'],
+[2,'Открытый стрит-дро на флопе: вероятность собрать стрит к ривера?','Th9h','8c7d2s',['17%','32%','45%','54%'],1,'8 аутов (шесть и валет). Правило 4: 8 × 4 ≈ 32%.'],
+[2,'Что такое c-bet?','','',['Ставка на флопе префлоп-агрессором','Ставка на ривере олл-ин','Колл на тёрне','Ставка из блайнда'],0,'Continuation bet — ставка на флопе игрока, который был агрессором на префлопе, независимо от того, попал ли он в борд.'],
+[2,'Почему позиция баттона выгодна?','','',['Ходите последним — больше информации','Дополнительные карты','Не платите блайнды','Ставки не ограничены'],0,'На флопе, тёрне и ривере баттон действует последним и видит решения соперников.']];
+const sq=(B,l)=>{const it=pick(B.filter(x=>x[0]==l)),[,t,h,b,o,a,e]=it;
+ const vis=h||b?(h?`<div class="lb">Ваши карты</div>${row(pc(h))}`:'')+(b?`<div class="lb">Борд</div>${row(pc(b))}`:''):`<div class="lb">Вопрос</div><div style="font-size:42px">♠ ♥ ♦ ♣</div>`;
+ return{t,vis,opts:o,ans:a,exp:e}};
+const STG=['Префлоп','Флоп','Тёрн','Ривер'],SX=['Общих карт ещё нет — видны только две карманные карты.','Три первые общие карты открываются вместе — это флоп.','Четвёртая общая карта — тёрн.','Пятая и последняя общая карта — ривер. Дальше финальная торговля и шоудаун.'];
+const m3=l=>{if(l)return sq(B3,l);const k=rnd(4),n=[0,3,4,5][k],d=deck(),ph='<div class="c ph"></div>';
+ return{t:'Какая сейчас стадия раздачи?',vis:`<div class="row">${d.slice(0,n).map(card).join('')}${ph.repeat(5-n)}</div>`,opts:STG,ans:k,exp:`<b>${STG[k]}.</b> ${SX[k]}`}};
+const m4=l=>{let A,B,bd,a,b,k;
+ for(let i=0;i<3000;i++){const d=deck();A=d.slice(0,2);B=d.slice(2,4);bd=d.slice(4,9);a=best([...A,...bd]);b=best([...B,...bd]);k=cmp(a.s,b.s);
+  if(l==0&&a.s[0]!=b.s[0]&&Math.max(a.s[0],b.s[0])>=1)break;if(l==1&&k!=0&&Math.min(a.s[0],b.s[0])>=1)break;if(l==2&&a.s[0]==b.s[0]&&a.s[0]>=1)break}
+ const w=k>0?0:k<0?1:2,why=k==0?'Лучшие пятёрки равны — банк делится.':a.s[0]!=b.s[0]?'Комбинация старшей категории побеждает.':'Категории одинаковы — решают ранги карт комбинации и кикеры.';
+ return{t:'Кто выигрывает раздачу?',vis:`<div class="lb">Борд</div>${row(bd)}<div class="duo"><div><div class="lb">Игрок A</div>${row(A)}</div><div><div class="lb">Игрок B</div>${row(B)}</div></div>`,opts:['Игрок A','Игрок B','Ничья (сплит)'],ans:w,use:(k>=0?a:b).use,exp:`A: ${ds(a.s)}.<br>B: ${ds(b.s)}.<br><b>${why}</b>`}};
+const m5=l=>sq(B5,l);
+// Модуль 6: оценка Чена
+function chen(r1,r2,su){const hi=Math.max(r1,r2),lo=Math.min(r1,r2),pt=r=>r==14?10:r==13?8:r==12?7:r==11?6:r/2;let p=pt(hi);
+ if(hi==lo)p=Math.max(5,p*2);else{const g=hi-lo-1;p-=g==0?0:g==1?1:g==2?2:g==3?4:5;if(g<2&&hi<12)p++}
+ if(su)p+=2;return Math.ceil(p)}
+const GN=['Премиум','Сильная','Играбельная','Слабая'],GA=['Рейзим и 3-бетим с любой позиции.','Открываем рейзом почти с любой позиции.','Играем из средней и поздней позиций, осторожнее на ранних.','Обычно фолд; лишь изредка — стил с баттона или защита блайнда.'];
+const m6=l=>{let r1,r2,su,v,d;for(let i=0;i<500;i++){r1=2+rnd(13);r2=2+rnd(13);su=r1!=r2&&rnd(2);v=chen(r1,r2,su);d=Math.min(Math.abs(v-11.5),Math.abs(v-8.5),Math.abs(v-5.5));if(l==0&&d>=1.5||l==1||l==2&&d<1)break}
+ const g=v>=12?0:v>=9?1:v>=6?2:3,s1=rnd(4);let s2=su?s1:(s1+1+rnd(3))%4;if(r1==r2&&s1==s2)s2=(s1+1)%4;
+ const kind=r1==r2?'карманная пара':su?'одномастная':'разномастная';
+ return{t:'К какой группе относится стартовая рука?',vis:row([{r:r1,s:s1,id:'a'},{r:r2,s:s2,id:'b'}])+`<div class="lb">${kind}</div>`,opts:GN,ans:g,exp:`<b>${GN[g]}.</b> Оценка Чена: ${v} (премиум ≥ 12, сильная 9–11, играбельная 6–8, слабая ≤ 5).<br>${GA[g]}`}};
+const MODS=[['Покерные комбинации','От старшей карты до стрит-флеша',m1],['Позиции за столом','BTN, SB, BB, UTG, CO и порядок хода',m2],['Этапы раздачи','Префлоп, флоп, тёрн, ривер, шоудаун',m3],['Определение победителя','Сравниваем руки, кикеры и сплит',m4],['Ситуационные задачи','Pot odds, ауты, ставки и решения',m5],['Сила стартовых рук','Группы рук по оценке Чена',m6]];
+const tot=m=>{let a=0,c=0;for(const l in st[m]||{}){a+=st[m][l][0];c+=st[m][l][1]}return[a,c]};
+function home(){inQ=false;const T=MODS.map((_,i)=>tot(i)).reduce((x,y)=>[x[0]+y[0],x[1]+y[1]],[0,0]);
+ app.innerHTML=`<h1>Тренажёр покера<br>для тех, кто учится</h1><p class="sub">Выберите модуль и уровень — карты и стол интерактивные, после каждого ответа вы получите объяснение.</p>
+<div class="chips"><span class="chip">Без регистрации</span><span class="chip">Статистика хранится в браузере</span><span class="chip">3 уровня сложности</span><span class="chip">Подробные объяснения</span></div>
+<div class="seg">${LV.map((x,i)=>`<button class="${i==lvl?'on':''}" onclick="lvl=${i};home()">${x}</button>`).join('')}</div>
+<div class="grid">${MODS.map((m,i)=>{const[a,c]=tot(i),p=a?Math.round(c/a*100):0;return`<button class="mod" onclick="start(${i})"><span class="n">Модуль №${i+1}</span><b>${m[0]}</b><span>${m[1]}</span><small>${a?`${a} ответов · ${p}% верных`:'Ещё не проходили'}</small><div class="bar2"><div style="width:${p}%"></div></div></button>`}).join('')}</div>
+<div class="st"><b>Ваша статистика</b> <span style="color:var(--m)">· всего ${T[0]} ответов, ${T[0]?Math.round(T[1]/T[0]*100):0}% верных</span><table><tr><th>Модуль</th>${LV.map(x=>`<th>${x}</th>`).join('')}</tr>${MODS.map((m,i)=>`<tr><td>${i+1}. ${m[0]}</td>${[0,1,2].map(l=>{const s=(st[i]||{})[l];return`<td>${s?s[1]+' / '+s[0]:'—'}</td>`}).join('')}</tr>`).join('')}</table>
+<p style="margin:12px 0 0"><button class="ghost ${rst?'btn rs':''}" onclick="reset()">${rst?'Точно сбросить?':'Сбросить статистику'}</button></p></div>`}
+function reset(){if(!rst){rst=true;home();return}st={};save();rst=false;home()}
+function start(i){mod=i;ses={n:0,c:0};quiz()}
+function quiz(){inQ=true;q=MODS[mod][2](lvl);done=false;
+ app.innerHTML=`<div class="bar"><button class="ghost" onclick="home()">← Модули</button><div class="pill">${mod+1}. ${MODS[mod][0]} · ${LV[lvl]}</div><div class="pill" id="sc">${ses.c} / ${ses.n}</div></div><div class="stage">${q.vis}</div><h2 class="qt">${q.t}</h2><div class="opts ${q.opts.length>5?'g2':''}">${q.opts.map((o,i)=>`<button class="o" onclick="ans(${i})"><kbd>${i+1}</kbd>${o}</button>`).join('')}</div><div id="fb" class="fb" hidden></div>`}
+function ans(i){if(done||i>=q.opts.length)return;done=true;const ok=i==q.ans;
+ st[mod]=st[mod]||{};st[mod][lvl]=st[mod][lvl]||[0,0];st[mod][lvl][0]++;if(ok)st[mod][lvl][1]++;save();ses.n++;if(ok)ses.c++;
+ document.querySelectorAll('.o').forEach((b,j)=>{b.disabled=true;if(j==q.ans)b.classList.add('ok');else if(j==i)b.classList.add('no')});
+ if(q.use)document.querySelectorAll('[data-id]').forEach(e=>{if(!q.use.includes(e.dataset.id))e.classList.add('dim')});
+ $('#sc').textContent=ses.c+' / '+ses.n;const f=$('#fb');f.hidden=false;
+ f.innerHTML=`<div class="fh ${ok?'g':'r'}">${ok?'Верно!':'Неверно'}</div><p>${q.exp}</p><button class="btn" onclick="quiz()">Дальше →</button>`;f.scrollIntoView({behavior:'smooth',block:'nearest'})}
+document.addEventListener('keydown',e=>{if(!inQ)return;if(e.key>='1'&&e.key<='9')ans(+e.key-1);else if((e.key=='Enter'||e.key==' ')&&done){e.preventDefault();quiz()}});
+home();
+</script></body></html>
